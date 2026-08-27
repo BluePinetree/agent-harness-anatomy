@@ -4,7 +4,8 @@
 the runs that complete, report success, and are wrong. `exit code 0` is not a success
 signal.
 
-**Confidence: high.** Five distinct instances, each independently confirmed.
+**Confidence: high.** Seven distinct instances, each independently confirmed. Five were
+found while the system was running; two more surfaced afterwards, while writing this up.
 
 ---
 
@@ -54,6 +55,71 @@ value from the wrong key. **It fired zero times across the entire archive.**
 A dormant guard is worse than a missing one. A missing guard is a known gap; a dormant
 guard is a false assurance that something is being watched.
 
+## Two more, found while writing this up
+
+Both were found in August 2026, after the project was archived, while preparing this
+repository. Neither had ever fired in production — one because the affected platform was
+never used, the other because the affected filesystem was never used. They belong here
+because they are the same failure class, and because finding them *after* declaring the
+list complete is itself the point.
+
+### 6. A function that does the thing its own docstring says is broken
+
+`crewai_prototype/phases/phase3_execution.py`, `_kill_process_tree`:
+
+```python
+def _kill_process_tree(proc) -> None:
+    """Kill the child's children too.
+
+    proc.kill() only kills the direct child, so grandchildren such as DataLoader
+    workers are left orphaned holding the GPU (observed: after an anchor timeout,
+    the experiment process kept running).
+    """
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)], ...)
+    else:
+        proc.kill()          # ← exactly what the docstring says does not work
+```
+
+The docstring states the problem correctly, cites a real observation, and then the
+non-Windows branch does the thing it just ruled out. On Linux and macOS the grandchildren
+this function exists to kill survive it.
+
+It never surfaced because every run was on Windows. The correct fix is one code path for
+all platforms — enumerate the tree with `psutil`, terminate, wait, then kill — rather than
+a per-OS branch where only one branch was ever exercised.
+
+**This is [ADR-013](../decisions/ADR-013-phase3-success-criterion-rc-vs-result-json.md)'s
+pattern again**: the conclusion was reached in writing and implemented halfway.
+
+### 7. Two functions, each correct, whose composition is not
+
+`crewai_prototype/runtime/liveness.py`. The lock helper is careful:
+
+```python
+except Exception:
+    # A filesystem that does not support locking (some network mounts,
+    # container volumes). Do not lie and claim we acquired it — return
+    # False so this is treated as undetermined.
+    return False
+```
+
+The caller reads that `False` differently:
+
+```python
+if not _try_lock(fh):
+    return ALIVE
+```
+
+The helper's comment says *undetermined*. The caller says *alive*. On a filesystem without
+lock support — a Google Drive mount, some container volumes — every run reads as
+permanently ALIVE and can never be reclaimed.
+
+Neither function is wrong on its own. The defect lives in the seam, which is where a
+reviewer reading either file in isolation will not find it. And the three-valued design
+that makes this finding's fix possible — `alive` / `dead` / **`unknown`** — was already
+there; the caller just never used the third value for this case.
+
 ## The shape they share
 
 | | |
@@ -63,8 +129,9 @@ guard is a false assurance that something is being watched.
 | Self-reported outcome | success |
 | Actual outcome | wrong, and undetectably so from the artifacts |
 
-Four of the five were found by hand, by noticing something odd in a number. None were
-found by the system. That ratio is the finding.
+Four of the first five were found by hand, by noticing something odd in a number. None
+were found by the system, and two more were still waiting to be found after the list was
+declared complete. That ratio is the finding.
 
 These map to the verification-failure category of the multi-agent failure taxonomy in
 [Cemri et al., 2025](https://arxiv.org/abs/2503.13657) — a category which, in a corpus of
@@ -88,6 +155,8 @@ generated paper — which is [04](04-papers-without-results.md).
 | Unit confusion | Fixed layer records the unit; comparison normalises before comparing |
 | Split contamination | Content hash per partition; overlap is a rule violation |
 | Dormant guard | The guard has its own test, with a case that must trip it |
+| Docstring vs branch | One code path for all platforms, or a test per branch |
+| Undetermined read as alive | Three-valued liveness, and callers that handle the third value |
 
 Every one of these is cheap. None of them is clever. They were absent not because they
 were hard but because nothing in the development loop ever asked whether a passing check

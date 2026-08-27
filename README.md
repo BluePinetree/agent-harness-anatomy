@@ -148,6 +148,8 @@ These map onto the verification category of the multi-agent failure taxonomy in
 | Unverifiable test access | Times the test set was evaluated | **Not recorded in any of 77 result files** — unknowable in principle |
 | Papers without results | 16 of 16 failed experiments produced a paper | Cross-referencing execution status against artifacts |
 | Dormant guard | A scale-check that never fired once | Read the value from the wrong key |
+| Docstring vs branch | A tree-kill whose non-Windows path does what its own docstring rules out | Read after archiving; never surfaced because every run was on Windows |
+| Undetermined read as alive | A lock helper returning "cannot tell" that the caller reads as "alive" | Read after archiving; needs a filesystem without lock support |
 
 **The last row is the theme of this repo.** The failure mode is not a missing check. It is
 a check that exists, is reported as passing, and is structurally incapable of firing.
@@ -188,6 +190,13 @@ Stated up front rather than discovered by a reader:
 - **Pre-registration timing.** The protocol in [protocol/](protocol/) governs work from
   this repository's first commit onward. It does **not** cover the archived runs, which
   were analysed retrospectively.
+
+### How this was made
+
+The decisions here are mine — what to build, what to measure, what the numbers meant, and
+when to stop — and I shaped the structure of both the system and this write-up. Repetitive
+code and skeleton scaffolding were delegated to AI, along with much of the drafting. Commits
+carry a co-author trailer accordingly.
 
 ---
 
