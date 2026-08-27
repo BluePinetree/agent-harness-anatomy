@@ -1,0 +1,333 @@
+# MARS benchmark pre-registration — the binding artifact.
+#
+# This file, not the prose companion, is the pre-registration. Its git commit
+# timestamp is the evidence that thresholds and selection rules were fixed before
+# any result was seen. Every field below is binding on the benchmark.
+#
+# Rules that follow from that:
+#   1. No MARS benchmark rollout runs until `status` is "v2_frozen".
+#   2. Any change is a separate, visible commit with `change_log` updated.
+#      Silent edits defeat the purpose.
+#   3. Each rollout records the SHA-256 of this file, so a result can be tied to
+#      the exact protocol it ran under.
+#
+# Human-readable rationale (why each value, what evidence backs it) lives in
+# docs/PREREGISTRATION.md, which is intentionally not committed — prose is not
+# the contract.
+
+schema_version: 1
+status: v1_1_frozen          # v1_1_frozen -> v2_frozen once vision thresholds land
+frozen_at: "2026-08-11"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task set
+# ─────────────────────────────────────────────────────────────────────────────
+tasks:
+  T1:
+    name: Titanic survival
+    type: tabular_classification
+    dataset: seaborn titanic
+    primary_metric: roc_auc
+    higher_is_better: true
+    device: cpu
+    models: [logistic_regression, random_forest]
+
+  T2:
+    name: California Housing
+    type: tabular_regression
+    dataset: sklearn.datasets.fetch_california_housing
+    primary_metric: r2
+    higher_is_better: true
+    device: cpu
+    models: [linear_regression, gradient_boosting]
+
+  T3:
+    name: CIFAR-10
+    type: vision_classification
+    dataset: CIFAR-10
+    primary_metric: top1_accuracy
+    higher_is_better: true
+    device: cuda
+    models: [resnet18, mobilenet_v2]
+
+# Task parameters the harness injects into the experiment CLI.
+# These define *what the task is*, not *how to solve it* — so they are fixed by the
+# protocol rather than chosen by the agent. If an agent could choose them, a rollout
+# could improve its metric by making the task easier (e.g. horizon=1 yields a much
+# better SMAPE than horizon=12), which is specification gaming rather than capability.
+# Modelling choices (window_size, backtest_mode, frequency handling) stay with the agent.
+task_params:
+  tabular_classification:  {test_size: 0.2}
+  tabular_regression:      {test_size: 0.2}
+  vision_classification:   {}
+  timeseries_forecasting:  {horizon: 12, test_size: 0.2}
+
+excluded_tasks:
+  CIFAR-100:
+    reason: >-
+      Measured 361 s/epoch for the two-model pair (ResNet-50 233.5 + ViT-tiny 127.9,
+      RTX A6000) in the archived implementation, which upsampled 32x32 to 224.
+      A CIFAR-native pair would cost about the same as T3, so the exclusion is a
+      cost decision about that implementation, not an intrinsic property.
+      May be re-added in a later round without changing the protocol.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task brief — byte-identical across frameworks, frozen verbatim.
+# States requirements, never an implementation.
+# ─────────────────────────────────────────────────────────────────────────────
+brief_condition: C1          # C1 = protocol + architecture requirements stated
+                             # C2 = task only (reported from archived runs, not re-measured)
+goals:
+  T3: >-
+    Train and compare ResNet-18 and MobileNetV2 on CIFAR-10 and report top-1
+    accuracy for each. Adapt each architecture to the 32x32 input resolution (do
+    not downsample the input excessively before the first residual stage). Hold
+    out 10% of the training data as a validation set; use the validation set
+    alone for epoch selection and model selection, and evaluate the test set
+    exactly once at the end. Report per-model test top-1 accuracy, the selected
+    epoch, and training time.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Measurement protocol
+# ─────────────────────────────────────────────────────────────────────────────
+protocol:
+  rollouts_per_task_per_framework: 3
+  rollout_definition: >-
+    One complete pipeline execution from the same topic and goal. Rollouts differ
+    only in the agent's own non-determinism; the experiment seed is fixed.
+
+  selection:
+    validation_source: train          # val is carved out of train, never test
+    val_split: 0.1
+    select_on: validation             # epoch, model and hyperparameter selection
+    test_evaluations_allowed: 1
+    cross_rollout_selection: validation   # best-val rollout's test metric is reported
+    on_violation: disqualify          # selecting on test is a protocol violation
+
+  reliability_metrics:
+    tier1:
+      execution_pass_at_3:   ">=1 of 3 rollouts completed execution without error"
+      execution_pass_all_3:  "3 of 3 rollouts completed execution without error"
+    tier2_primary:
+      qualified_pass_at_3:   ">=1 of 3 rollouts is a Qualified Success"
+      qualified_pass_all_3:  "3 of 3 rollouts are Qualified Successes"
+    qualified_success: >-
+      execution completed successfully AND every model's test metric meets its
+      threshold (per-model, not best-model)
+
+  quality_metric_primary: >-
+    Test metric of the rollout with the best validation metric, evaluated once.
+
+  secondary_metrics:
+    - per_rollout_distribution
+    - wall_clock_and_phase_timings
+    - repair_attempts_by_stage
+    - improvement_iterations_and_epoch_budget_consumed
+    - human_gates_opened
+    - failure_classification
+    - tokens_and_cost        # only where instrumentation exists; see limitations
+
+  success_determined_by: harness    # NOT the agent's self-report
+  self_reported_fields_are_recorded_but_not_trusted:
+    - execution_success
+    - validation_tier
+    - dataset_origin
+    - evaluation_scope
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Thresholds — a rollout qualifies only if EVERY model clears its own threshold.
+# ─────────────────────────────────────────────────────────────────────────────
+thresholds:
+  per_model: true
+  tolerance_pp: 2.00
+  tolerance_basis: >-
+    Observed spread between competent human implementations of the same recipe:
+    published CIFAR-10 ResNet-18 results range 93.02% (kuangliu/pytorch-cifar) to
+    95.40% (HF jaeunglee/resnet18-cifar10-unlearning), a 2.4 pp band. A narrower
+    tolerance would fail agents for landing inside normal human variation.
+
+  T1:
+    source: literature_band
+    roc_auc: 0.83            # upper end of the standard 0.77-0.83 textbook band
+  T2:
+    source: literature_band
+    r2: 0.78                 # just above the measured untuned GB result (0.7756)
+  T3:
+    source: reference_baseline    # value filled in at v2, mechanically
+    resnet18: null
+    mobilenet_v2: null
+    procedure:
+      - Apply the CIFAR stem adaptation (3x3 stride-1 conv, max-pool removed) so
+        32x32 inputs are not reduced to 8x8 before the first residual stage.
+      - Run a human-written reference baseline under the identical budget below.
+      - Its per-model test top-1 becomes the threshold, minus tolerance_pp.
+      - Run once. It is not re-run to obtain a more convenient threshold.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Budget — identical for all frameworks. Derived from measurement, not estimate.
+# See comparison/calibration/ for the measurement artifacts.
+# ─────────────────────────────────────────────────────────────────────────────
+budget:
+  epoch_cap: 200
+  epoch_cap_enforcement: harness_injected_and_verified
+  # sklearn estimators have no epoch lever, so an actual_epochs == epoch_cap check
+  # would fail on T1/T2 for reasons unrelated to the agent. Declared here rather than
+  # branched in code, so the exemption cannot be introduced after seeing results.
+  epoch_cap_applies_to: [vision_classification, timeseries_forecasting]
+  experiment_timeout_s: 43200        # 12 h
+  wall_clock_cap_s: 54000            # 15 h
+  stall_timeout_s: 3600              # kill the process tree after this much silence
+  max_improvement_iterations: 1
+  max_codegen_repair_attempts: 5
+  max_execution_repair_attempts: 3
+  max_replan_rounds: 5
+  max_coder_llm_turns: 40
+  max_conversation_rounds: 120
+  experiment_seed: 42
+  repeats: 1
+  cost_cap_usd: null                 # not enforceable — no token accounting yet
+
+  calibration:
+    machine: NVIDIA RTX A6000
+    measured_on: "2026-08-05"
+    recipe_s_per_epoch:
+      resnet18: 9.14
+      mobilenet_v2: 12.96
+      pair: 22.10
+    projection_h:
+      one_rollout_200ep: 1.23
+      nine_rollouts: 11.05
+      nine_rollouts_plus_baseline: 12.28
+
+  recipe:                            # T3, literature standard for CIFAR-10
+    optimizer: SGD
+    lr: 0.1
+    momentum: 0.9
+    weight_decay: 5.0e-4
+    scheduler: CosineAnnealingLR
+    t_max: 200
+    warmup_epochs: 0
+    batch_size: 128
+    eval_batch_size: 256
+    num_workers: 8
+    amp: false                       # regresses MobileNetV2 (13.94 -> 16.41 s/ep)
+    cudnn_deterministic: true        # retained at no throughput cost
+    augmentation: [random_crop_32_pad4, random_horizontal_flip, normalize]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Model and sampling — identical across frameworks
+# ─────────────────────────────────────────────────────────────────────────────
+llm:
+  model_all_roles: gpt-5.2
+  reasoning_effort: medium
+  send_temperature: false
+  send_top_p: false
+  send_top_k: false
+  rationale: >-
+    gpt-5.2 accepts an explicit temperature only at reasoning_effort=none, and
+    gpt-5-mini rejects any value, so identical explicit temperatures are
+    unreachable; forcing them would pin effort to none and benchmark a
+    reasoning-disabled configuration. Effort is therefore sent explicitly rather
+    than inherited, because omitting temperature removes what previously pinned it.
+  note_on_continuity: >-
+    All archived runs used the implicit default effort (none). Their latency and
+    token figures are not continuous with this round's and are not compared.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Failure handling — all rollouts reported, including failures
+# ─────────────────────────────────────────────────────────────────────────────
+failures:
+  classes:
+    agent_failure:   {counted_in_metrics: true}
+    infra_failure:   {counted_in_metrics: false}   # auth, rate limit, network
+    harness_bug:     {counted_in_metrics: false}   # defect in MARS itself
+  excluded_counts_are_always_reported: true
+  types:
+    - planning_drift
+    - design_mismatch
+    - syntax_error
+    - import_error
+    - signature_mismatch          # most frequent in archived data (13 of 21)
+    - runtime_error
+    - timeout
+    - missing_result
+    - schema_error
+    - repair_loop_exhausted
+    - fake_success_stub
+    - fake_success_nan
+    - paper_without_result        # 16 archived runs wrote a paper with a failed experiment
+    - protocol_violation_test_selection
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Reproducibility
+# ─────────────────────────────────────────────────────────────────────────────
+reproducibility:
+  tiers:
+    T0_logs_only:       artifacts and logs retained, no environment pin
+    T1_env_pinned:      environment and command recorded well enough to attempt re-execution
+    T2_replay_verified: a frozen-workspace re-execution was performed and its diff recorded
+  t2_requires_diff_artifact: true     # self-declared replay equality does not qualify
+  per_run_record_must_include:
+    - run_id
+    - framework
+    - task_id
+    - trial_id
+    - experiment_seed
+    - budget_source_sha256            # SHA-256 of this file
+    - planned_epochs
+    - actual_epochs
+    - pipeline_status
+    - task_outcome                    # harness-determined
+    - self_reported                   # isolated object, not a metric
+    - primary_metric
+    - wire_llm_params                 # what was actually sent, not what was configured
+    - commit
+    - worktree_dirty
+    - entry_command
+    - experiment_replay_command
+  headless_gates_auto_resolved: true  # no rollout may be described as human-approved
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Limitations, declared in advance
+# ─────────────────────────────────────────────────────────────────────────────
+limitations:
+  - id: no_token_accounting
+    text: LLM call counts, tokens and cost are not collected; cost-per-qualified-success is not reported this round.
+  - id: llm_sampling_not_seed_controlled
+    text: Providers offer no reproducible sampling. Rollout non-determinism is measured, not removed.
+  - id: tool_calls_not_comparable
+    text: CrewAI performs file I/O in orchestrator Python by design; the count is an architecture artefact, reported qualitatively only.
+  - id: defence_asymmetry
+    text: In-framework reliability machinery differs (CrewAI ~1750 lines, AutoGen ~173, LangGraph ~121). Mitigated by harness-level verification, not eliminated.
+  - id: single_hardware
+    text: One machine, one hardware profile. No cross-hardware generalisation claimed.
+  - id: small_sample
+    text: Three tasks, three rollouts. Per-rollout raw values published; no significance testing.
+  - id: frameworks_without_prior_completion
+    text: Only CrewAI has a completed run. A framework producing no qualified success is reported as the result, not as a missing measurement.
+  - id: no_methodology_search
+    text: >-
+      There is no mechanism for proposing or trying alternative methodologies.
+      Planner and designer schemas have no candidate-method field, no prompt asks
+      for ablations or variants, and the improvement loop escalates epochs without
+      regenerating code. Variation is emergent and unstable: the same task and goal
+      produced 10 experiment configurations in one archived rollout and 2 in
+      another. This benchmark therefore measures orchestration reliability under a
+      fixed methodology, not autonomous methodology search. Deferred to a later
+      round because it must apply identically to all three frameworks.
+
+change_log:
+  - version: v1
+    date: "2026-08-04"
+    change: Rules, tabular thresholds and the vision threshold procedure frozen.
+  - version: v1.1
+    date: "2026-08-11"
+    change: >-
+      epoch_cap 20 -> 200 with the budget re-derived from measurement; sampling
+      omitted with reasoning_effort pinned to medium and one model for all roles;
+      threshold tolerance 2.00 pp made per-model; T3 brief frozen under condition
+      C1; limitation no_methodology_search added. Machine-readable form introduced
+      as the binding artifact, replacing the prose document.
+  - version: v2
+    date: pending
+    change: Vision threshold values from the reference baseline run.

@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: >-
+  agent-harness-anatomy: findings from building and dismantling an
+  autonomous ML-research pipeline
+message: "If you refer to these findings, please cite this repository."
+type: software
+authors:
+  - family-names: "Yun"
+    given-names: "Yunsu"
+repository-code: "https://github.com/BluePinetree/agent-harness-anatomy"
+abstract: >-
+  A study record of an autonomous machine-learning research pipeline built on a
+  multi-agent LLM framework and run 271 times. Documents four findings: that the
+  framework was wrapping a single agent while coordination was hand-written; that
+  numbers produced by LLM-authored code cannot be adjudicated on and a fixed code
+  layer must own the evidence; seven measured failure modes in which the system
+  reported success it could not substantiate; and the engineering required to keep
+  multi-hour runs alive, which short-horizon agent benchmarks do not exercise.
+keywords:
+  - llm-agents
+  - agent-harness
+  - multi-agent-systems
+  - research-automation
+  - reproducibility
+license: MIT

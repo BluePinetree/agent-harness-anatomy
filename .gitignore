@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Large artifacts — this repository is documents, not data
+*.pt
+*.ckpt
+*.tar.gz
+*.zip
