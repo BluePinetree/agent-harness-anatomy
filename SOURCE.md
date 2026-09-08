@@ -6,7 +6,7 @@ The system analysed in this repository is archived separately.
 |---|---|
 | **Repository** | `BluePinetree/MARS` |
 | **Contents** | ~14,500 lines of Python, a React streaming UI, three framework prototypes |
-| **History** | 13 commits, 2026-06-04 to 2026-07-27 |
+| **History** | 26 commits, 2026-06-04 to 2026-08-25 |
 | **State** | Archived, read-only. Not maintained |
 
 ## Why the code is not duplicated here
@@ -23,7 +23,8 @@ cites specific files by path.
 The original local and remote histories diverged. A `filter-branch` rewrite — removing a
 355 MB dataset blob that exceeded the file-size limit — produced a local branch sharing no
 common ancestor with the published one. The published history is the complete line through
-2026-07-27; a small amount of later local work was never pushed.
+2026-08-25; the divergent local branch is 9 commits ending 2026-08-06, and a small amount of
+its work — the shared stability platform under `rsp/`, for one — was never pushed.
 
 This is left as it is rather than reconciled. A study record should show what happened, and
 breaking your own history with `filter-branch` and not noticing for two months is part of
