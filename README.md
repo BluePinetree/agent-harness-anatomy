@@ -2,7 +2,7 @@
 
 # agent-harness-anatomy
 
-**What I found by building an autonomous ML-research pipeline on a multi-agent LLM framework, running it 271 times, and then taking it apart.**
+**What I found by building an autonomous ML-research pipeline on a multi-agent LLM framework, running it until its archive held hundreds of run directories, and then taking it apart.**
 
 ![status: inactive](https://img.shields.io/badge/status-inactive-lightgrey)
 ![license: MIT](https://img.shields.io/badge/license-MIT-blue)
@@ -11,6 +11,34 @@
 > (`MARS`) is archived — see [SOURCE.md](SOURCE.md) for the original code and its full
 > commit history. What lives here is the analysis: what was actually load-bearing, what
 > broke, and why the original research framing turned out to be untestable.
+
+> **Recount note — 2026-09-09.** A later audit of the archive re-derived the aggregate
+> counts used below. Some reproduced exactly, some did not, and the headline directory
+> count turns out to depend on a definition that was never stated. **The original figures
+> are left in place below, and in [findings/](findings/) and [protocol/](protocol/), as
+> part of the study record.** The detailed recount and its evidence map are in
+> [campus_phd/CASE_STUDY.md](campus_phd/CASE_STUDY.md) §7.
+>
+> | Originally reported | Recount, 2026-09-09 |
+> |---|---|
+> | 96 result files (`result.json`) | **96** — reproduced exactly |
+> | 122 `run_*` and 91 `v3_*` directories | **122** and **91** — reproduced exactly |
+> | 271 run directories | **the count depends on the definition.** `outputs/` holds 271 *entries*, of which **270** are directories — the extra entry is `grep.exe.stackdump`, a 1,013-byte crash dump. **224** of those directories contain any file at all; the union of `outputs/` and `runs/` ids that contain any file is **276** |
+> | 29 archived runs with metrics (1/29, 0/29, 3/29, 20/29) | **not reproducible.** 44 run directories carry a non-empty `metrics` block; no filter tried yields 29. On that set of 44: 23 self-report success, and exactly 1 names a validation split — and that one belongs to a development era the archive's own README marks as uncitable |
+> | 16 of 16 failed experiments produced a paper | **not reproducible as a ratio.** 37 directories contain a `paper.md`; 18 of those had no successful execution. The direction of the finding stands; the exact enumeration does not |
+> | 77 result files (test-access claim) | **not reproducible.** 96 `result.json`, 342 `result*.json` |
+>
+> The scripts that produced the original figures are in neither this repository nor the
+> archived `MARS` one, so the differences cannot be adjudicated — only disclosed. A figure
+> that cannot be recomputed is testimony, which is
+> [findings/02](findings/02-evidence-vs-testimony.md) applied to this record itself.
+
+**Research-methods case study:** [campus_phd/CASE_STUDY.md](campus_phd/CASE_STUDY.md) —
+evidence versus testimony, worked from this archive. Reading order: this README →
+[campus_phd/CASE_STUDY.md](campus_phd/CASE_STUDY.md) →
+[findings/02](findings/02-evidence-vs-testimony.md) →
+[findings/03](findings/03-silent-success.md) →
+[findings/06](findings/06-why-this-stopped.md).
 
 ---
 
@@ -53,8 +81,10 @@ question → plan → design → code → execute → analyze → write
 Built on CrewAI, with partial ports to AutoGen and LangGraph for a planned three-way
 comparison. ~14,500 lines of Python, a React streaming UI, and five human-approval gates.
 
-**It worked.** 271 run directories, 96 result files, papers generated end to end. The
-question this repo answers is not *did it run* but *what did running it 271 times show*.
+**It worked.** 271 run directories as originally counted — see the recount note above for
+what that number does and does not establish — 96 result files, and papers generated end to
+end. The question this repo answers is not *did it run* but *what running it that many times
+showed*.
 
 ---
 
@@ -93,7 +123,8 @@ The single idea from this project I would carry into any other agent system.
 | **Testimony** | LLM-authored experiment code | None. Record it, never adjudicate on it |
 | **Evidence** | Code the LLM may not rewrite | The only admissible basis for a verdict |
 
-**Why the boundary is necessary, measured.** Across 29 archived runs with metrics:
+**Why the boundary is necessary, measured.** Across 29 archived runs with metrics — a
+count the recount note above could not reproduce; on a recount the set is 44 runs:
 
 | | |
 |---|---|
@@ -179,8 +210,10 @@ project. → [findings/06](findings/06-why-this-stopped.md)
 
 Stated up front rather than discovered by a reader:
 
-- **n = 271 run directories, 96 result files.** One operator, one machine, one model
-  family, three task families (image classification, tabular regression, time series).
+- **n = 271 run directories as originally counted, 96 result files.** On the 2026-09-09
+  recount: 270 directories, 224 of them containing any file, and the 96 reproduced exactly.
+  One operator, one machine, one model family, three task families (image classification,
+  tabular regression, time series).
 - **Not a controlled benchmark.** Conditions changed across the period as the system was
   debugged. The pathologies are existence proofs, not rates.
 - **One framework completed.** AutoGen and LangGraph were partially ported and never ran
@@ -217,6 +250,7 @@ carry a co-author trailer accordingly.
 - **Architecture lesson:** findings/01 → findings/02 → notes/
 - **Reliability engineering:** findings/03 → findings/05 → decisions/
 - **Research-methods lesson:** findings/06 → protocol/
+- **Evidence vs testimony, worked end to end:** campus_phd/CASE_STUDY.md → findings/02 → findings/03 → findings/06
 
 ## Related work
 

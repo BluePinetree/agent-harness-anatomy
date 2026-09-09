@@ -1,6 +1,6 @@
 # From Agent Testimony to Scientific Evidence
 
-**Lessons from an archive of 270 research-pipeline run directories**
+**Lessons from an archive of several hundred research-pipeline runs**
 
 > **What this document is.** A retrospective engineering and research record, written for
 > readers interested in how a PhD researcher can use AI assistants in scientific work
@@ -43,7 +43,8 @@ machine-generated ([decisions/README.md](../decisions/README.md), ADR-005). The 
 CrewAI implementation is
 **14,613 lines of Python** (`MARS/crewai_prototype/`, measured).
 
-It ran. The archive holds **270 run directories** and **96 `result.json` files**
+It ran. The archive holds **270 directories** under `outputs/` — **224** of them holding
+any file — and **96 `result.json` files**
 ([evidence/INDEX.md](../evidence/INDEX.md)), and papers were generated end to end.
 
 What was *finished*: the CrewAI pipeline, the long-horizon execution machinery, the UI, the
@@ -204,17 +205,29 @@ and **not** covering the archived runs, which were analysed retrospectively.
 
 Two limits specific to this document:
 
-**Some published counts could not be reproduced.** The repository reports 271 run
-directories, a 29-run measurement table, and 16 of 16 failed experiments producing papers.
-Recounting the archive gives **270** directories (the 271st entry in `outputs/` is
-`grep.exe.stackdump`, a 1,013-byte crash dump, not a run); **44** run directories with a
-non-empty metrics block under the obvious criterion, with no filter I tried yielding 29; and
-**37** directories containing a `paper.md`, of which **18** had no successful execution. The
-counting scripts behind the published figures are in neither repository, so the difference
-cannot be adjudicated. This document therefore uses only the figures it re-derived. That a
-number in a study record cannot be recomputed makes it testimony — which is the thesis of
-section 4 turned on its author, and the reason it is disclosed here rather than reconciled
-quietly.
+**Some published counts could not be reproduced, and the headline one has no single
+answer.** The repository reports 271 run directories, a 29-run measurement table, 16 of 16
+failed experiments producing papers, and 77 result files. Recounting gives this:
+
+| Reported | Recount |
+|---|---|
+| 96 result files; 122 `run_*` and 91 `v3_*` | reproduced exactly |
+| 271 run directories | **definition-dependent.** `outputs/` holds 271 entries, **270** directories (the extra entry is `grep.exe.stackdump`, 1,013 bytes), **224** directories containing any file, and **276** ids with content across `outputs/` and `runs/` |
+| the 29-run table | not reproducible — **44** directories carry a non-empty metrics block, and no filter tried yields 29 |
+| 16 of 16 papers | not reproducible as a ratio — **37** directories hold a `paper.md`, **18** of them with no successful execution |
+| 77 result files | not reproducible — 96 `result.json`, 342 `result*.json` |
+
+The counting scripts behind the published figures are in neither repository, so the
+differences cannot be adjudicated. Note what the middle row means: "run directories" was
+never a count of runs, and three defensible definitions of it disagree — one of them
+*higher* than the published figure. This document therefore uses figures it re-derived, and
+names the definition whenever it uses one.
+
+That a number in a study record cannot be recomputed makes it testimony — the thesis of
+section 4 turned on its author, and the reason this is disclosed rather than reconciled
+quietly. The recount is now summarised at the top of [README.md](../README.md) and in
+[evidence/INDEX.md](../evidence/INDEX.md), with the original figures left in place there and
+in [findings/](../findings/).
 
 **Frequencies are unknown.** Every pathology above is an existence proof from an
 uncontrolled archive. None of them supports a rate, and none supports a claim about agent
@@ -227,7 +240,7 @@ systems in general.
 | Seven framework call sites, each one agent and one task | `MARS/crewai_prototype/phases/phase1_planning.py:212,231`; `phase3_execution.py:1231,1309`; `phase4_writing.py:343,503,575` | verified |
 | The largest phase does not import the framework | `MARS/crewai_prototype/phases/phase2_coding.py` (1,209 lines, no `crewai` import) | verified |
 | Completed implementation is 14,613 lines of Python | `MARS/crewai_prototype/` | verified |
-| Archive holds 270 run directories and 96 `result.json` files | `legacy_pre_prereg/outputs/`; [evidence/INDEX.md](../evidence/INDEX.md) | verified |
+| Archive holds 270 directories under `outputs/`, 224 of them non-empty, and 96 `result.json` files | `legacy_pre_prereg/outputs/`; [evidence/INDEX.md](../evidence/INDEX.md) | verified |
 | An 810-fit sweep produced a result bit-identical to the untuned anchor | `legacy_pre_prereg/outputs/*_dce015/…/result.json` vs `*_c0dad6/…/result.json` | verified |
 | A generated paper asserts 3 epochs; its result file shows 1 | `…run_20260730_160553_*_d359ba/workspace/results/result.json` (`avg_epoch_time_s == total_train_time_s`) and `…/paper/paper.md` | verified |
 | The goal gate can pass below the goal on a fraction/percent mismatch | `MARS/crewai_prototype/orchestration/target_gate.py` (`evaluate`) | verified |
@@ -239,6 +252,6 @@ systems in general.
 | Archived runs used OpenAI `gpt-5.2`; no Claude model appears in the archive | model strings in `legacy_pre_prereg/`; `MARS/crewai_prototype/config.yaml` | verified |
 | Separating evidence from testimony is the transferable result of the project | [findings/02](../findings/02-evidence-vs-testimony.md) | interpretation |
 | Silent success is more dangerous than crashes in autonomous pipelines | [findings/03](../findings/03-silent-success.md), [findings/04](../findings/04-papers-without-results.md) | interpretation |
-| Published counts of 271, 29 and 16/16 are not reproducible from the archive | recount in section 7; no counting script in either repository | verified |
+| The published 29-run table, 16-of-16 and 77-result-file counts are not reproducible; the published 96 and 122 / 91 reproduce exactly; the published 271 is definition-dependent | recount in section 7; no counting script in either repository | verified |
 | Division of labour: assistant for critique, navigation, drafting; evidence layer independently verified | section 5; repository commit trailers | proposal |
 | The 50-minute workshop and its exercise | section 6 | proposal |

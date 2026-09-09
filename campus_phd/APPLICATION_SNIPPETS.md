@@ -3,8 +3,9 @@
 Reusable text for applications, with an evidence path under each claim. Companion to
 [CASE_STUDY.md](CASE_STUDY.md).
 
-**Two rules these snippets follow.** Numbers are the ones re-derived from the archive, not
-the repository's published counts, which could not be recomputed (see
+**Two rules these snippets follow.** Numbers are the ones re-derived from the archive.
+Some of the repository's published counts reproduced exactly and some did not, and the
+headline directory count depends on a definition that was never stated (see
 [CASE_STUDY.md](CASE_STUDY.md) §7). And the archived runs were driven by OpenAI `gpt-5.2` —
 no Claude model appears anywhere in the archive — so every sentence about Claude is in the
 present or future tense, about how this experience shapes current practice.
@@ -14,12 +15,13 @@ present or future tense, about how this experience shapes current practice.
 ## 50-word project summary
 
 An autonomous ML-research pipeline — plan, code, execute, analyse, write — built on a
-multi-agent LLM framework, run until its archive held 270 run directories and 96 result
-files, then taken apart. The framework-comparison claim it was built to test was withdrawn
-on structural grounds. The verification problem it exposed survived.
+multi-agent LLM framework, run until its archive held hundreds of run directories and 96
+result files, then taken apart. The framework-comparison claim it was built to test was
+withdrawn on structural grounds. The verification problem it exposed survived.
 
-> *Evidence:* `legacy_pre_prereg/outputs/` (270 directories, 96 `result.json`);
-> [findings/06](../findings/06-why-this-stopped.md); `MARS` commit `eea4b96`.
+> *Evidence:* `legacy_pre_prereg/outputs/` (270 directories, 224 of them non-empty, 96
+> `result.json`); [findings/06](../findings/06-why-this-stopped.md); `MARS` commit
+> `eea4b96`.
 
 ---
 
@@ -70,9 +72,10 @@ stay with a fixed layer no model may author, and I verify those independently.
 ## Technical credibility
 
 - **Built and operated a six-stage autonomous research pipeline end to end** — 14,613 lines
-  of Python, a React streaming UI, five approval gates, and an archive of 270 run
-  directories and 96 result files. The gates held up in design; in the archived runs the
-  headless harness auto-approved plans, so those approvals are machine-generated.
+  of Python, a React streaming UI, five approval gates, and an archive of 270 directories
+  under `outputs/` (224 non-empty) and 96 result files. The gates held up in design; in the
+  archived runs the headless harness auto-approved plans, so those approvals are
+  machine-generated.
   *Evidence:* `MARS/crewai_prototype/`; `legacy_pre_prereg/outputs/`;
   [decisions/README.md](../decisions/README.md) (ADR-005 later status).
 
@@ -109,10 +112,13 @@ stay with a fixed layer no model may author, and I verify those independently.
   [protocol/preregistration.yaml](../protocol/preregistration.yaml).
 
 - **Applied the same scrutiny to my own write-up.** Preparing this material I could not
-  recompute the repository's published counts of 271 runs, a 29-run table, and 16 of 16
-  papers; the recount gives 270, 44, and 18 of 37, and the original counting scripts exist
-  in neither repository. The discrepancy is disclosed rather than reconciled, because a
-  figure that cannot be recomputed is testimony by my own definition.
+  recompute three of the repository's published counts — the 29-run table became 44, 16 of
+  16 papers became 18 of 37, and the 77 result files became 96 — while its 96-result-file
+  and 122 / 91 generation figures reproduced exactly. The headline "271 run directories"
+  turned out to have no single answer: 271 entries, 270 directories, 224 non-empty, 276
+  across `outputs/` and `runs/`. The original counting scripts exist in neither repository,
+  so the discrepancy is disclosed rather than reconciled — a figure that cannot be
+  recomputed is testimony by my own definition.
   *Evidence:* [CASE_STUDY.md](CASE_STUDY.md) §7 and its evidence map.
 
 ## Workshop topics for PhD and postdoc researchers

@@ -1,5 +1,14 @@
 # Archived runs
 
+> **Recount note — 2026-09-09.** The counts on this page were re-derived later. The 96
+> result files and the 122 / 91 generation split reproduced exactly; the 271 figure turns
+> out to depend on an unstated definition (271 `outputs/` entries, 270 of them directories,
+> 224 with any file, 276 across `outputs/` and `runs/`); and the 29-run table below could
+> not be reproduced — 44 directories carry a non-empty metrics block, and no filter tried
+> yields 29. The page is left as written, because it is the record of what was counted at
+> the time. See [../README.md](../README.md) for the summary and
+> [../campus_phd/CASE_STUDY.md](../campus_phd/CASE_STUDY.md) §7 for the detail.
+
 ## Inventory
 
 | | Count |

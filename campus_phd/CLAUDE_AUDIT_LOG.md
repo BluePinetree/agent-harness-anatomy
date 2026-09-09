@@ -17,7 +17,7 @@ deterministic confirms it. That argument applies to the case study itself.
 | **Tool** | Claude Code (Anthropic's CLI for Claude), desktop app |
 | **Model** | Claude Opus 5 (`claude-opus-5`), reported by the session environment |
 | **Repositories read** | this repository (`agent-harness-anatomy`, at `707df3d`); the archived `MARS` published clone (26 commits, `eea4b96`); the `MARS` working clone; the run archive `crewai_prototype/legacy_pre_prereg/`; the hashed evidence copy `MARS-evidence-2026-08/` |
-| **Write scope** | new files under `campus_phd/`, plus one factual correction to `SOURCE.md` made on the user's explicit instruction (see *Corrections*). Nothing else existing was modified, and nothing was committed, pushed, tagged or released |
+| **Write scope** | new files under `campus_phd/`; a factual correction to `SOURCE.md`; and, in a later pass on the user's instruction, a recount note added to `README.md`, `README.ko.md` and `evidence/INDEX.md` (see *Corrections*). `findings/`, `protocol/`, `decisions/`, `log/` and `notes/` were not modified. Nothing was committed, pushed, tagged or released |
 | **Experiments run** | none. No pipeline execution, no training, no model call from `MARS` |
 
 The tool and model names above are what the environment reports. Nothing else about the
@@ -83,19 +83,21 @@ run; the two California Housing runs compared in the case study;
   key names; the most frequent genuine metric name occurs three times, and the only keys
   recurring more often are wrapper keys from a self-nesting bug.
 
-**Could not be reproduced.** Recorded rather than worked around.
+**Could not be reproduced, or had no single answer.** Recorded rather than worked around.
 
 | Published figure | Recount |
 |---|---|
-| 271 run directories | 270 directories; `outputs/` holds 271 *entries*, the extra one a 1,013-byte `grep.exe.stackdump` |
+| 271 run directories | **definition-dependent, not simply wrong.** 271 `outputs/` entries, **270** of them directories (the extra one a 1,013-byte `grep.exe.stackdump`), **224** directories containing any file, **276** ids with content across `outputs/` and `runs/`. "Run directories" was never a count of runs |
 | The 29-run measurement table (1/29, 0/29, 3/29, 20/29) | 44 runs carry a non-empty metrics block; no filter tried yields 29 |
 | 16 of 16 failed experiments produced a paper | 37 runs hold a `paper.md`; 18 of those had no successful execution |
 | 77 result files | 96 `result.json`, 342 `result*.json` |
 | `SOURCE.md`: 13 commits to 2026-07-27 | 26 commits, 2026-06-04 to 2026-08-25 — **corrected in `SOURCE.md` on the user's instruction** |
 
 The scripts that produced the published figures are in neither repository, so these
-differences were disclosed in [CASE_STUDY.md](CASE_STUDY.md) §7 and left standing. No
-existing document was edited to match.
+differences were disclosed rather than adjudicated — first in [CASE_STUDY.md](CASE_STUDY.md)
+§7, then in a dated recount note at the front of `README.md`, `README.ko.md` and
+`evidence/INDEX.md`. The original figures were not edited to match; they remain in place
+there and in `findings/` and `protocol/`.
 
 **Claude-specific provenance, checked because the case study depends on getting it right.**
 
@@ -121,10 +123,13 @@ The following were not the assistant's to make, and were referred back:
    first attempt to reconstruct the original counting criteria. The user chose re-derived
    numbers only.
 3. **Whether to correct `evidence/INDEX.md` and the READMEs, or let the old and new figures
-   coexist.** The user chose coexistence; nothing existing was touched.
+   coexist.** The user first chose plain coexistence, then chose to disclose the recount at
+   the front of the repository while leaving the original figures in place. Both passes are
+   recorded here.
 4. **Whether the case study is accurate about the division of labour.** Asserted from
    [README.md](../README.md) and the commit trailers, and left for the user to confirm.
-5. **Whether to add a README link, commit, or publish.** Not done; still open.
+5. **Whether to change the taglines, add the `evidence/INDEX.md` pointer, commit, or
+   publish.** The first two were approved and done; nothing has been committed or pushed.
 
 ## Corrections made during verification
 
@@ -140,6 +145,17 @@ shown to work.
   approval gates without noting that the headless harness auto-approved plans. Both were
   corrected — the first to "consistent only with one", the second by adding the caveat that
   `decisions/README.md` records for ADR-005.
+
+A later pass, again on the user's instruction, disclosed the recount at the front of the
+repository rather than only inside `campus_phd/`. A dated recount note was added to
+[README.md](../README.md), [README.ko.md](../README.ko.md) and
+[evidence/INDEX.md](../evidence/INDEX.md); the original figures were left in place there and
+in `findings/` and `protocol/`; and both taglines dropped their run count, because
+re-measuring showed "run directories" was never a count of runs — 271 entries, 270
+directories, 224 non-empty, and 276 ids with content across `outputs/` and `runs/` are all
+defensible readings, one of them higher than the published figure. The two counts that had
+reproduced exactly (96 result files, and the 122 / 91 generation split) are named as such, so
+the note does not imply every figure is in doubt.
 
 One existing document was corrected, on the user's explicit instruction after the discrepancy
 was reported. [SOURCE.md](../SOURCE.md) stated "13 commits, 2026-06-04 to 2026-07-27" for the
