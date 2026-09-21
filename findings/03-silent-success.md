@@ -17,12 +17,10 @@ A `GridSearchCV` was declared over **324 hyperparameter configurations with 5-fo
 cross-validation — 1,620 fits**. The result matched the no-search baseline **to sixteen
 decimal places**.
 
-> **Corrected 2026-09-15.** This was published as "810 trials" from the first commit
-> until now. The figure came from an internal review note that counted the grid as 162
-> combinations; the grid in the run's own `exp_config.py` has 324, because one binary
-> axis (`max_features: [None, "sqrt"]`) was dropped in that count. Nobody recomputed it
-> before publishing. The unit was wrong too — this is an exhaustive grid search, not a
-> trial-based one; there is no `n_trials` anywhere in the run.
+> **Corrected 2026-09-15.** Published as "810 trials" until now. The figure came from an
+> internal review note that counted the grid as 162 combinations; the run's own
+> `exp_config.py` has 324, dropping one binary axis (`max_features: [None, "sqrt"]`). The
+> unit was wrong too — this is an exhaustive grid search, not a trial-based one.
 >
 > ```bash
 > # 324 = 3 × 3 × 3 × 2 × 3 × 2, from the run's own generated config

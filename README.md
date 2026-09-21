@@ -231,8 +231,10 @@ Stated up front rather than discovered by a reader:
 
 The decisions here are mine — what to build, what to measure, what the numbers meant, and
 when to stop — and I shaped the structure of both the system and this write-up. Repetitive
-code and skeleton scaffolding were delegated to AI, along with much of the drafting. Commits
-carry a co-author trailer accordingly.
+code and skeleton scaffolding were delegated to AI, along with much of the drafting.
+ The commit trailers
+are on the first two commits only and do not track this; the division for `campus_phd/` is
+recorded in [campus_phd/CLAUDE_AUDIT_LOG.md](campus_phd/CLAUDE_AUDIT_LOG.md).
 
 ---
 

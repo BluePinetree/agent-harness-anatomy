@@ -168,9 +168,9 @@ verdicts**. These come from a fixed layer the model may not author, ideally cont
 so that a modified evidence layer is a detected rule violation rather than an undetected
 success.
 
-This division is why some commits in this repository carry a Claude co-author trailer
-while the decisions, the measurements, and the judgements about what the numbers mean are
-mine ([README.md](../README.md), "How this was made").
+That division is recorded in [CLAUDE_AUDIT_LOG.md](CLAUDE_AUDIT_LOG.md), not in the commit
+trailers, while the decisions, the measurements, and the judgements about what the numbers
+mean are mine ([README.md](../README.md), "How this was made").
 
 ## 6. Workshop for PhD and postdoc researchers
 
@@ -226,8 +226,7 @@ names the definition whenever it uses one.
 
 **The replacement figure did not survive either.** The 2026-09-09 recount replaced "16 of 16"
 with "18 of 37 with no successful execution." A second pass on 2026-09-21 could not produce 18
-from the archive under any definition it tried, and no script survives that produces it. What
-the archive does support is the table below — every row recomputable from the run directories.
+under any definition it tried. What the archive supports is the table below.
 
 | Definition of "no successful execution" | Of the 37 |
 |---|---|
@@ -262,10 +261,9 @@ print(sum(not has(d, 'exact', True) for d in paper), 'with no non-empty metrics'
 EOF
 ```
 
-18 is not among them, so it is withdrawn rather than restated. Note what the first row costs:
-by the pipeline's own verdict **nothing failed at all**, while every evidence-based definition
-puts the number between 13 and 20. That gap is the finding of section 3, measured on the
-write-up instead of the runs.
+18 is not among them, so it is withdrawn rather than restated. By the pipeline's own verdict
+nothing failed at all, while every evidence-based definition puts the number between 13 and
+20 — the finding of section 3, on the write-up instead of the runs.
 
 That a number in a study record cannot be recomputed makes it testimony — the thesis of
 section 4 turned on its author, and the reason this is disclosed rather than reconciled
@@ -297,5 +295,5 @@ systems in general.
 | Separating evidence from testimony is the transferable result of the project | [findings/02](../findings/02-evidence-vs-testimony.md) | interpretation |
 | Silent success is more dangerous than crashes in autonomous pipelines | [findings/03](../findings/03-silent-success.md), [findings/04](../findings/04-papers-without-results.md) | interpretation |
 | The published 29-run table, 16-of-16 and 77-result-file counts are not reproducible; the published 96 and 122 / 91 reproduce exactly; the published 271 is definition-dependent | recount in section 7; no counting script in either repository | verified |
-| Division of labour: assistant for critique, navigation, drafting; evidence layer independently verified | section 5; repository commit trailers | proposal |
+| Division of labour: assistant for critique, navigation, drafting; evidence layer independently verified | section 5; [CLAUDE_AUDIT_LOG.md](CLAUDE_AUDIT_LOG.md) | proposal |
 | The 50-minute workshop and its exercise | section 6 | proposal |

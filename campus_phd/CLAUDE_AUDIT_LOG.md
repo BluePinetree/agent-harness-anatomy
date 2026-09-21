@@ -4,6 +4,9 @@ A record of one AI-assisted working session on this repository, kept so that the
 behind [CASE_STUDY.md](CASE_STUDY.md) and
 [APPLICATION_SNIPPETS.md](APPLICATION_SNIPPETS.md) is inspectable rather than asserted.
 
+The scope of this log is the case study under `campus_phd/`. The system, the runs, the
+archive, the findings, the ADRs and the protocol predate this session and are the author's.
+
 This log exists because the case study argues that model output is testimony until something
 deterministic confirms it. That argument applies to the case study itself.
 
@@ -17,7 +20,7 @@ deterministic confirms it. That argument applies to the case study itself.
 | **Tool** | Claude Code (Anthropic's CLI for Claude), desktop app |
 | **Model** | Claude Opus 5 (`claude-opus-5`), reported by the session environment |
 | **Repositories read** | this repository (`agent-harness-anatomy`, at `707df3d`); the archived `MARS` published clone (26 commits, `eea4b96`); the `MARS` working clone; the run archive `crewai_prototype/legacy_pre_prereg/`; the hashed evidence copy `MARS-evidence-2026-08/` |
-| **Write scope** | new files under `campus_phd/`; a factual correction to `SOURCE.md`; and, in a later pass on the user's instruction, a recount note added to `README.md`, `README.ko.md` and `evidence/INDEX.md` (see *Corrections*). `findings/`, `protocol/`, `decisions/`, `log/` and `notes/` were not modified. **Corrected 2026-09-15:** this row previously ended "Nothing was committed, pushed, tagged or released." That was true when written and false when published — the work was committed and pushed to `origin/main`. No tag or release was created. |
+| **Write scope** | new files under `campus_phd/`; a factual correction to `SOURCE.md`; and, in a later pass on the user's instruction, a recount note added to `README.md`, `README.ko.md` and `evidence/INDEX.md` (see *Corrections*). `findings/`, `protocol/`, `decisions/`, `log/` and `notes/` were not modified. **Corrected 2026-09-15:** this row previously ended "Nothing was committed, pushed, tagged or released." The work was committed and pushed to `origin/main`; no tag or release was created. |
 | **Experiments run** | none. No pipeline execution, no training, no model call from `MARS` |
 
 The tool and model names above are what the environment reports. Nothing else about the
@@ -106,13 +109,10 @@ there and in `findings/` and `protocol/`.
   roles, and `protocol/preregistration.yaml` pins `model_all_roles: gpt-5.2`.
 - The published `MARS` history carries no `Co-Authored-By` trailer on any of its 26 commits.
 - **Corrected 2026-09-15.** This previously read "Both commits in this repository carry
-  `Co-Authored-By: Claude Opus 5`." That was true when the repository had two commits and
-  false by the time this sentence was published. Exactly two commits carry the trailer
-  (`c041467`, `707df3d`); every commit after them does **not**, including the three that
-  delivered this case study (`24d46a6`, `cadc45f`, `dac77e9`) and this correction itself. No
-  total is given here — a total goes stale on the next commit, which is how the sentence it
-  replaces became false. Verify with
+  `Co-Authored-By: Claude Opus 5`." Exactly two commits carry the trailer (`c041467`,
+  `707df3d`); every commit after them does not. Verify with
   `git log --format='%h %s' --grep='Co-Authored-By: Claude'`.
+- The trailer is not the attribution record; this file is.
 - The original working tree contained a `CLAUDE.md` and a near-identical `AGENTS.md`, so at
   least two agent harnesses were configured for development. Neither file establishes that
   any particular change was made with either.
@@ -134,11 +134,11 @@ The following were not the assistant's to make, and were referred back:
    the front of the repository while leaving the original figures in place. Both passes are
    recorded here.
 4. **Whether the case study is accurate about the division of labour.** Asserted from
-   [README.md](../README.md) and the commit trailers, and left for the user to confirm.
+   [README.md](../README.md) and from this log, and left for the user to confirm.
 5. **Whether to change the taglines, add the `evidence/INDEX.md` pointer, commit, or
    publish.** The first two were approved and done. **Corrected 2026-09-15:** this sentence
-   previously ended "nothing has been committed or pushed"; the work was in fact committed
-   and pushed as `24d46a6`, `cadc45f`, `dac77e9`.
+   previously ended "nothing has been committed or pushed"; it was committed and pushed
+   as `24d46a6`, `cadc45f`, `dac77e9`.
 
 ## Corrections made during verification
 
