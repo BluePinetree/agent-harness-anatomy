@@ -41,7 +41,9 @@ capability, was the bottleneck.
 > `phase4_writing.py:343,503,575` (seven `Crew(...)` sites, each one agent and one task);
 > [findings/06](../findings/06-why-this-stopped.md); recount of
 > `legacy_pre_prereg/outputs/**/result.json` (306 key names, 44 metrics-bearing runs);
-> 37 run directories hold a `paper.md`, 18 of them with no successful execution.
+> 37 run directories hold a `paper.md`. How many lacked a successful execution has no single
+> answer — **0** by the runs' own status fields, **15 / 13 / 20** by three evidence-based
+> definitions ([CASE_STUDY.md](CASE_STUDY.md) §7, with the script).
 
 ---
 
@@ -49,7 +51,7 @@ capability, was the bottleneck.
 
 Four months of running an autonomous pipeline taught me one distinction, and I now organise
 my work around it: a number written by model-authored code is the model's testimony about a
-measurement, not the measurement. One archived run declared an 810-fit hyperparameter sweep
+measurement, not the measurement. One archived run declared a 1,620-fit hyperparameter grid search
 and returned a result identical to the untuned baseline in all sixteen digits. Another
 produced a paper asserting three training epochs when the arithmetic in its own result file
 — average epoch time equal to total training time — is consistent only with one.
@@ -113,7 +115,8 @@ stay with a fixed layer no model may author, and I verify those independently.
 
 - **Applied the same scrutiny to my own write-up.** Preparing this material I could not
   recompute three of the repository's published counts — the 29-run table became 44, 16 of
-  16 papers became 18 of 37, and the 77 result files became 96 — while its 96-result-file
+  16 papers became 37 with no single answer for how many had failed, and the 77 result files
+  became 96 — while its 96-result-file
   and 122 / 91 generation figures reproduced exactly. The headline "271 run directories"
   turned out to have no single answer: 271 entries, 270 directories, 224 non-empty, 276
   across `outputs/` and `runs/`. The original counting scripts exist in neither repository,

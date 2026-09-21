@@ -13,8 +13,21 @@ found while the system was running; two more surfaced afterwards, while writing 
 
 ### 1. A search that never ran
 
-A hyperparameter sweep was configured for **810 trials**. The result matched the
-no-search baseline **to sixteen decimal places**.
+A `GridSearchCV` was declared over **324 hyperparameter configurations with 5-fold
+cross-validation — 1,620 fits**. The result matched the no-search baseline **to sixteen
+decimal places**.
+
+> **Corrected 2026-09-15.** This was published as "810 trials" from the first commit
+> until now. The figure came from an internal review note that counted the grid as 162
+> combinations; the grid in the run's own `exp_config.py` has 324, because one binary
+> axis (`max_features: [None, "sqrt"]`) was dropped in that count. Nobody recomputed it
+> before publishing. The unit was wrong too — this is an exhaustive grid search, not a
+> trial-based one; there is no `n_trials` anywhere in the run.
+>
+> ```bash
+> # 324 = 3 × 3 × 3 × 2 × 3 × 2, from the run's own generated config
+> sed -n '55,64p' <archive>/outputs/*_dce015/workspace/src/exp_config.py
+> ```
 
 The configuration had no path to reach the experiment — the argument was accepted by the
 launcher and never forwarded. The sweep never executed once. The system recorded the run

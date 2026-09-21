@@ -69,7 +69,8 @@ because the negative result is more useful than the comparison would have been.
 
 Three worked examples, each re-derived from the archive for this document.
 
-**A tuning sweep that never executed.** One run declared an 810-fit `GridSearchCV`. Its
+**A tuning sweep that never executed.** One run declared a `GridSearchCV` over 324
+configurations with 5-fold cross-validation — **1,620 fits**. Its
 gradient-boosting test R² is `0.7756446042829697`. The untuned anchor run's
 gradient-boosting test R² is `0.7756446042829697` — identical to all sixteen significant
 digits. The configuration had no path to the experiment: the generated `experiment_impl.py`
@@ -167,7 +168,7 @@ verdicts**. These come from a fixed layer the model may not author, ideally cont
 so that a modified evidence layer is a detected rule violation rather than an undetected
 success.
 
-This division is why the two commits in this repository carry a Claude co-author trailer
+This division is why some commits in this repository carry a Claude co-author trailer
 while the decisions, the measurements, and the judgements about what the numbers mean are
 mine ([README.md](../README.md), "How this was made").
 
@@ -214,7 +215,7 @@ failed experiments producing papers, and 77 result files. Recounting gives this:
 | 96 result files; 122 `run_*` and 91 `v3_*` | reproduced exactly |
 | 271 run directories | **definition-dependent.** `outputs/` holds 271 entries, **270** directories (the extra entry is `grep.exe.stackdump`, 1,013 bytes), **224** directories containing any file, and **276** ids with content across `outputs/` and `runs/` |
 | the 29-run table | not reproducible — **44** directories carry a non-empty metrics block, and no filter tried yields 29 |
-| 16 of 16 papers | not reproducible as a ratio — **37** directories hold a `paper.md`, **18** of them with no successful execution |
+| 16 of 16 papers | not reproducible, and neither is the replacement — **37** directories hold a `paper.md` (reproduced exactly), but how many lacked a successful execution has no single answer. See below |
 | 77 result files | not reproducible — 96 `result.json`, 342 `result*.json` |
 
 The counting scripts behind the published figures are in neither repository, so the
@@ -222,6 +223,49 @@ differences cannot be adjudicated. Note what the middle row means: "run director
 never a count of runs, and three defensible definitions of it disagree — one of them
 *higher* than the published figure. This document therefore uses figures it re-derived, and
 names the definition whenever it uses one.
+
+**The replacement figure did not survive either.** The 2026-09-09 recount replaced "16 of 16"
+with "18 of 37 with no successful execution." A second pass on 2026-09-21 could not produce 18
+from the archive under any definition it tried, and no script survives that produces it. What
+the archive does support is the table below — every row recomputable from the run directories.
+
+| Definition of "no successful execution" | Of the 37 |
+|---|---|
+| the run's own `run_summary.json` verdict | **0** — all 37 record `status: completed` with an empty `error` |
+| no `result.json` anywhere in the run | **15** |
+| no `result*.json` anywhere in the run | **13** |
+| no non-empty `metrics` block in any `result.json` | **20** |
+
+```bash
+# from legacy_pre_prereg/ ; the metrics predicate below also reproduces the published 44
+python - <<'EOF'
+import json, os
+paper = sorted({dp.split(os.sep)[1] for dp, dn, fn in os.walk('outputs') if 'paper.md' in fn})
+def has(d, pat, need_metrics=False):
+    for dp, dn, fn in os.walk(os.path.join('outputs', d)):
+        for f in fn:
+            if not (f == 'result.json' if pat == 'exact' else f.startswith('result') and f.endswith('.json')):
+                continue
+            if not need_metrics:
+                return True
+            try:
+                m = json.load(open(os.path.join(dp, f), encoding='utf-8'))
+            except Exception:
+                continue
+            if isinstance(m, dict) and m.get('metrics'):
+                return True
+    return False
+print(len(paper), 'runs hold a paper.md')
+print(sum(not has(d, 'exact') for d in paper), 'with no result.json')
+print(sum(not has(d, 'glob') for d in paper), 'with no result*.json')
+print(sum(not has(d, 'exact', True) for d in paper), 'with no non-empty metrics')
+EOF
+```
+
+18 is not among them, so it is withdrawn rather than restated. Note what the first row costs:
+by the pipeline's own verdict **nothing failed at all**, while every evidence-based definition
+puts the number between 13 and 20. That gap is the finding of section 3, measured on the
+write-up instead of the runs.
 
 That a number in a study record cannot be recomputed makes it testimony — the thesis of
 section 4 turned on its author, and the reason this is disclosed rather than reconciled
@@ -241,7 +285,7 @@ systems in general.
 | The largest phase does not import the framework | `MARS/crewai_prototype/phases/phase2_coding.py` (1,209 lines, no `crewai` import) | verified |
 | Completed implementation is 14,613 lines of Python | `MARS/crewai_prototype/` | verified |
 | Archive holds 270 directories under `outputs/`, 224 of them non-empty, and 96 `result.json` files | `legacy_pre_prereg/outputs/`; [evidence/INDEX.md](../evidence/INDEX.md) | verified |
-| An 810-fit sweep produced a result bit-identical to the untuned anchor | `legacy_pre_prereg/outputs/*_dce015/…/result.json` vs `*_c0dad6/…/result.json` | verified |
+| A 1,620-fit grid search produced a result bit-identical to the untuned anchor | `legacy_pre_prereg/outputs/*_dce015/…/result.json` vs `*_c0dad6/…/result.json`; grid at `*_dce015/workspace/src/exp_config.py:55-64` | verified, recomputed 2026-09-15 |
 | A generated paper asserts 3 epochs; its result file shows 1 | `…run_20260730_160553_*_d359ba/workspace/results/result.json` (`avg_epoch_time_s == total_train_time_s`) and `…/paper/paper.md` | verified |
 | The goal gate can pass below the goal on a fraction/percent mismatch | `MARS/crewai_prototype/orchestration/target_gate.py` (`evaluate`) | verified |
 | 306 distinct metric key names across 44 metrics-bearing runs; most frequent real name occurs 3× | recount of `legacy_pre_prereg/outputs/**/result.json` | verified |

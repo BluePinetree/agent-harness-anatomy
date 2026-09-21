@@ -8,6 +8,11 @@
 > yields 29. The page is left as written, because it is the record of what was counted at
 > the time. See [../README.md](../README.md) for the summary and
 > [../campus_phd/CASE_STUDY.md](../campus_phd/CASE_STUDY.md) §7 for the detail.
+>
+> **Added 2026-09-21.** The same applies to the paper count. 37 run directories hold a
+> `paper.md` — reproduced exactly — but how many of them lacked a successful execution has
+> no single answer (0 / 15 / 13 / 20, by four definitions), and the **18** published on
+> 2026-09-09 is reproduced by none of them. It is withdrawn; §7 carries the script.
 
 ## Inventory
 

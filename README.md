@@ -25,7 +25,7 @@
 > | 122 `run_*` and 91 `v3_*` directories | **122** and **91** — reproduced exactly |
 > | 271 run directories | **the count depends on the definition.** `outputs/` holds 271 *entries*, of which **270** are directories — the extra entry is `grep.exe.stackdump`, a 1,013-byte crash dump. **224** of those directories contain any file at all; the union of `outputs/` and `runs/` ids that contain any file is **276** |
 > | 29 archived runs with metrics (1/29, 0/29, 3/29, 20/29) | **not reproducible.** 44 run directories carry a non-empty `metrics` block; no filter tried yields 29. On that set of 44: 23 self-report success, and exactly 1 names a validation split — and that one belongs to a development era the archive's own README marks as uncitable |
-> | 16 of 16 failed experiments produced a paper | **not reproducible as a ratio.** 37 directories contain a `paper.md`; 18 of those had no successful execution. The direction of the finding stands; the exact enumeration does not |
+> | 16 of 16 failed experiments produced a paper | **not reproducible, and neither was the replacement.** 37 directories contain a `paper.md` — reproduced exactly. How many of them lacked a successful execution has **no single answer**: the runs' own status fields say **0**, absence of a `result.json` says **15**, absence of any `result*.json` says **13**, absence of a non-empty metrics block says **20**. The **18** published here on 2026-09-09 is reproduced by none of these and is withdrawn. The direction of the finding stands; no exact enumeration does — [detail and script](campus_phd/CASE_STUDY.md#7-limits) |
 > | 77 result files (test-access claim) | **not reproducible.** 96 `result.json`, 342 `result*.json` |
 >
 > The scripts that produced the original figures are in neither this repository nor the
@@ -55,12 +55,15 @@ evidence versus testimony, worked from this archive. Reading order: this README 
    → [findings/02](findings/02-evidence-vs-testimony.md)
 
 3. **The dangerous failures are the ones that report success.** A hyperparameter search
-   configured for 810 trials that never executed — and was recorded as "fully verified."
+   declared over 324 configurations with 5-fold cross-validation — 1,620 fits — that never
+   executed, and was recorded as "fully verified."
    A goal of 70% marked as reached at 68.86%. Epoch counts silently downgraded from 3 to 1.
    `exit code 0` is not a success signal. → [findings/03](findings/03-silent-success.md)
 
-4. **Every failed experiment still produced a paper.** 16 out of 16. The writing stage had
-   no dependency on the execution stage succeeding.
+4. **Every failed experiment still produced a paper.** Originally reported as 16 of 16;
+   neither that ratio nor its replacement survives a recount — 37 runs hold a paper, and how
+   many of them failed depends entirely on what counts as failure (see the table above). The
+   writing stage had no dependency on the execution stage succeeding.
    → [findings/04](findings/04-papers-without-results.md)
 
 5. **The real engineering was keeping 12-hour runs alive**, not the agent logic. Pipe
@@ -172,12 +175,12 @@ These map onto the verification category of the multi-agent failure taxonomy in
 
 | Pathology | How it presented | How it was caught |
 |---|---|---|
-| Phantom search | 810-trial sweep configured, never executed | Result identical to the no-search baseline to 16 decimal places |
+| Phantom search | A 1,620-fit grid search declared, never executed | Result identical to the no-search baseline to 16 decimal places |
 | Silent scale downgrade | 3 epochs planned, 1 run | Epoch count derived from per-epoch timing arrays |
 | Unit confusion | 68.86 accepted against a 70% goal | Early-stop fired when it should not have |
 | Split contamination | Test data placed in the validation slot, reported as "validation" | Read the generated code; **the name alone cannot reveal this** |
 | Unverifiable test access | Times the test set was evaluated | **Not recorded in any of 77 result files** — unknowable in principle |
-| Papers without results | 16 of 16 failed experiments produced a paper | Cross-referencing execution status against artifacts |
+| Papers without results | Papers produced by runs with no successful execution (published as 16 of 16; the enumeration does not reproduce — see above) | Cross-referencing execution status against artifacts |
 | Dormant guard | A scale-check that never fired once | Read the value from the wrong key |
 | Docstring vs branch | A tree-kill whose non-Windows path does what its own docstring rules out | Read after archiving; never surfaced because every run was on Windows |
 | Undetermined read as alive | A lock helper returning "cannot tell" that the caller reads as "alive" | Read after archiving; needs a filesystem without lock support |

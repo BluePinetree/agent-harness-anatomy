@@ -17,7 +17,7 @@ deterministic confirms it. That argument applies to the case study itself.
 | **Tool** | Claude Code (Anthropic's CLI for Claude), desktop app |
 | **Model** | Claude Opus 5 (`claude-opus-5`), reported by the session environment |
 | **Repositories read** | this repository (`agent-harness-anatomy`, at `707df3d`); the archived `MARS` published clone (26 commits, `eea4b96`); the `MARS` working clone; the run archive `crewai_prototype/legacy_pre_prereg/`; the hashed evidence copy `MARS-evidence-2026-08/` |
-| **Write scope** | new files under `campus_phd/`; a factual correction to `SOURCE.md`; and, in a later pass on the user's instruction, a recount note added to `README.md`, `README.ko.md` and `evidence/INDEX.md` (see *Corrections*). `findings/`, `protocol/`, `decisions/`, `log/` and `notes/` were not modified. Nothing was committed, pushed, tagged or released |
+| **Write scope** | new files under `campus_phd/`; a factual correction to `SOURCE.md`; and, in a later pass on the user's instruction, a recount note added to `README.md`, `README.ko.md` and `evidence/INDEX.md` (see *Corrections*). `findings/`, `protocol/`, `decisions/`, `log/` and `notes/` were not modified. **Corrected 2026-09-15:** this row previously ended "Nothing was committed, pushed, tagged or released." That was true when written and false when published — the work was committed and pushed to `origin/main`. No tag or release was created. |
 | **Experiments run** | none. No pipeline execution, no training, no model call from `MARS` |
 
 The tool and model names above are what the environment reports. Nothing else about the
@@ -89,7 +89,7 @@ run; the two California Housing runs compared in the case study;
 |---|---|
 | 271 run directories | **definition-dependent, not simply wrong.** 271 `outputs/` entries, **270** of them directories (the extra one a 1,013-byte `grep.exe.stackdump`), **224** directories containing any file, **276** ids with content across `outputs/` and `runs/`. "Run directories" was never a count of runs |
 | The 29-run measurement table (1/29, 0/29, 3/29, 20/29) | 44 runs carry a non-empty metrics block; no filter tried yields 29 |
-| 16 of 16 failed experiments produced a paper | 37 runs hold a `paper.md`; 18 of those had no successful execution |
+| 16 of 16 failed experiments produced a paper | 37 runs hold a `paper.md` — reproduced. **The 18 published here was itself not reproducible** (second pass, 2026-09-21): the runs' own status fields say 0 failed, three evidence-based definitions say 15, 13 and 20, and no definition tried yields 18. Withdrawn rather than restated |
 | 77 result files | 96 `result.json`, 342 `result*.json` |
 | `SOURCE.md`: 13 commits to 2026-07-27 | 26 commits, 2026-06-04 to 2026-08-25 — **corrected in `SOURCE.md` on the user's instruction** |
 
@@ -105,7 +105,14 @@ there and in `findings/` and `protocol/`.
   `gpt-4o-mini`. No Claude model appears. `config.yaml` assigns `provider: openai` to all
   roles, and `protocol/preregistration.yaml` pins `model_all_roles: gpt-5.2`.
 - The published `MARS` history carries no `Co-Authored-By` trailer on any of its 26 commits.
-- Both commits in this repository carry `Co-Authored-By: Claude Opus 5`.
+- **Corrected 2026-09-15.** This previously read "Both commits in this repository carry
+  `Co-Authored-By: Claude Opus 5`." That was true when the repository had two commits and
+  false by the time this sentence was published. Exactly two commits carry the trailer
+  (`c041467`, `707df3d`); every commit after them does **not**, including the three that
+  delivered this case study (`24d46a6`, `cadc45f`, `dac77e9`) and this correction itself. No
+  total is given here — a total goes stale on the next commit, which is how the sentence it
+  replaces became false. Verify with
+  `git log --format='%h %s' --grep='Co-Authored-By: Claude'`.
 - The original working tree contained a `CLAUDE.md` and a near-identical `AGENTS.md`, so at
   least two agent harnesses were configured for development. Neither file establishes that
   any particular change was made with either.
@@ -129,7 +136,9 @@ The following were not the assistant's to make, and were referred back:
 4. **Whether the case study is accurate about the division of labour.** Asserted from
    [README.md](../README.md) and the commit trailers, and left for the user to confirm.
 5. **Whether to change the taglines, add the `evidence/INDEX.md` pointer, commit, or
-   publish.** The first two were approved and done; nothing has been committed or pushed.
+   publish.** The first two were approved and done. **Corrected 2026-09-15:** this sentence
+   previously ended "nothing has been committed or pushed"; the work was in fact committed
+   and pushed as `24d46a6`, `cadc45f`, `dac77e9`.
 
 ## Corrections made during verification
 
