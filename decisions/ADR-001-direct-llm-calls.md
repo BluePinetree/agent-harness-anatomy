@@ -27,6 +27,12 @@ follows the conventional CrewAI tool-calling workflow.
 
 ## Problem
 
+> **Correction, 2026-09-24.** The line below names Claude Sonnet. `crewai_prototype/config.yaml`
+> maps all six agents to `provider: "openai"`, and `code_generator` — the agent this ADR is
+> about — to `gpt-5.2` at temperature 0. Anthropic is a configured provider and
+> `claude-sonnet-4-5` appears in its model list, but nothing is mapped to it. The original
+> line is left unchanged below.
+
 In practice, the LLM (Claude Sonnet via CrewAI 1.x native function-calling mode)
 **returned Python code as plain text in the response body** instead of emitting a
 tool call. The ReAct loop recorded the text as a "Final Answer" and moved on.
